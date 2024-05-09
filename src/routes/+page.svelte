@@ -65,10 +65,6 @@
     });
 </script>
 
-<svelte:head>
-    <title>Zapline-JP</title>
-</svelte:head>
-
 <main>
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
