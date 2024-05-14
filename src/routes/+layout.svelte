@@ -9,7 +9,7 @@
             <a class="nav-link" href="/">Home</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link disabled" href="/about">about</a>
+            <a class="nav-link disabled" href="#">about</a>
         </li>
     </ul>
 </nav>
