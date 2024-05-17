@@ -22,13 +22,13 @@
 </script>
 
 <div class="text-center">
-    
-    {#if profile}
-        <img class="w-50 h-auto rounded-circle" src={profile.picture ?? unknownPic} alt={profile.name ?? 'unknown'} />
-    {:else}
-        <img class="w-50 h-auto rounded-circle" src={unknownPic} alt="unknown" />
-    {/if}
-    <!--<img class="w-50 h-auto rounded-circle" src={unknownPic} alt="unknown" />-->
+    <div class="icon-container">
+        {#if profile}
+            <img src={profile.picture ?? unknownPic} class="rounded-circle img-fluid" alt={profile.name ?? 'unknown'} />
+        {:else}
+            <img src={unknownPic} class="rounded-circle img-fluid" alt="unknown" />
+        {/if}
+    </div>
 
     <p class="card-text">
         {#if profile}
@@ -44,5 +44,10 @@
 </div>
 
 <style>
-
+    .icon-container img {
+        width: 50%; /* Set the width of the image to 50% of its parent */
+        height: auto; /* Maintain the aspect ratio */
+        aspect-ratio: 1 / 1; /* Set a fixed aspect ratio of 1:1 */
+        object-fit: cover; /* Ensure the image covers the space without distortion */
+    }
 </style>
