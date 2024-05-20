@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { pubkey } from '$lib/Type';
     import * as Nostr from 'nostr-typedef';
-    import { profilePool } from '../stores/profilePool';
+    import { profilePool } from '../stores/ProfilePool';
         
     export let pubkey: pubkey;
     const unknownPic = "https://robohash.org/" + pubkey + ".png?set=set4";

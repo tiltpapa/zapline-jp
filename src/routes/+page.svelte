@@ -7,7 +7,7 @@
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { dicRelay, localRelay } from "$lib/Relay";
-    import { profilePool } from "../stores/profilePool";
+    import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
 
     onMount(() => {
