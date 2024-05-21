@@ -17,7 +17,7 @@
 <div class="card">
     <div class="card-body">
         <div class="row">
-            <div class="col">
+            <div class="col-5">
                 <Profile pubkey={event.sender} />
             </div>
             
@@ -25,7 +25,7 @@
                 <FontAwesomeIcon icon={faArrowRight} size="2x" />
             </div>
 
-            <div class="col">
+            <div class="col-5">
                 <Profile pubkey={event.receiver} />
             </div>
         </div>
