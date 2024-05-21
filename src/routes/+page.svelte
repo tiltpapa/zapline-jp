@@ -2,13 +2,13 @@
     import { WebSocket } from "ws";
 //  import * as Nostr from "nostr-typedef";
     import { onMount } from "svelte";
-    import { batch, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
+    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
     import ZapCard from "./ZapCard.svelte";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
-    import { bufferTime } from "rxjs";
+    import { bufferCount, bufferTime } from "rxjs";
 
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
@@ -29,25 +29,33 @@
                     const existSenderInPool = ($profilePool.find((content) => content.pubkey === $zapPool[0].sender)) !== undefined;
                     const existReceiverInPool = ($profilePool.find((content) => content.pubkey === $zapPool[0].receiver)) !== undefined;
                     
-                    let authorArray = [];
                     if ( !existSenderInPool ) {
-                        authorArray.push($zapPool[0].sender);
+                        backward.emit({ kinds: [0], authors: [$zapPool[0].sender], limit: 1});
                     }
                     if ( !existReceiverInPool ) {
-                        authorArray.push($zapPool[0].receiver);
-                    }
-                    if ( authorArray.length !== 0 ) {
-                        backward.emit({
-                            kinds: [0],
-                            authors: authorArray,
-                            limit: 1
-                        });
+                        backward.emit({ kinds: [0], authors: [$zapPool[0].receiver], limit: 1});
                     }
                 }
             });
         forward.emit({ kinds:[9735], limit: 10 });
 
-        const batcher = backward.pipe(bufferTime(1000), batch());
+        const batcher = backward
+                            .pipe(
+                                bufferTime(1 * 1000), 
+                                batch(), 
+                                chunk(
+                                    (filters) => filters.length > 10,
+                                    (filters) => {
+                                        const pile = [...filters];
+                                        const chunks = [];
+
+                                        while (pile.length > 0) {
+                                            chunks.push(pile.splice(0, 10));
+                                        }
+
+                                        return chunks;
+                                    }
+                            ));
         rxNostr
             .use(batcher, {relays: dicRelay})
             .pipe(latestEach((packet) => packet.event.pubkey))
