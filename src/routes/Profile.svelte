@@ -30,7 +30,7 @@
         {/if}
     </div>
 
-    <p class="card-text">
+    <p class="card-text text-truncate">
         {#if profile}
             {#if profile.display_name}
                 {profile.display_name}
