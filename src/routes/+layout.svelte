@@ -6,7 +6,7 @@
     <title>Zapline-JP</title>
 </svelte:head>
 
-<nav class="navbar navbar-expand navbar-light bg-light">
+<nav class="navbar navbar-expand fixed-top navbar-light bg-light">
     <a class="navbar-brand ps-3" href="{base}/">Zapline-JP</a>
     <ul class="nav navbar-nav">
         <li class="nav-item">
@@ -18,8 +18,12 @@
     </ul>
 </nav>
 
-<slot></slot>
+<div class="main-content">
+    <slot></slot>
+</div>
 
 <style>
-
+    .main-content {
+        margin-top: 56px;
+    }
 </style>
