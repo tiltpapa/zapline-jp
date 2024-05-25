@@ -72,7 +72,8 @@
                         follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
                         console.debug('[Follow]', follow);
                         if (follow !== undefined){
-                            forward.emit({ kinds:[9735], limit: 20 });
+                            const sinceDate = Math.floor(Date.now() / 1000) - (6 * 60 * 60);
+                            forward.emit({ kinds:[9735], since: sinceDate});
                         }
                     }
                     let metadata = JSON.parse(event.content);
