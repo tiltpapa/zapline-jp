@@ -39,7 +39,7 @@
                     }
                 }
             });
-        forward.emit({ kinds:[9735], limit: 10 });
+//      forward.emit({ kinds:[9735], limit: 10 });
 
         const batcher = backward
                             .pipe(
@@ -65,9 +65,11 @@
                 next: (packet) => {
                     const event = packet.event;
                     if (event.kind === 3){
-                        const plist = event.tags.filter((item) => item[0] === "p");
-                        follow = plist.map(item => item[1]);
+                        follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
                         console.debug('[Follow]', follow);
+                        if (follow !== undefined){
+                            forward.emit({ kinds:[9735], limit: 20 });
+                        }
                     }
                     let metadata = JSON.parse(event.content);
                     metadata.pubkey = event.pubkey;
@@ -84,6 +86,8 @@
 <main>
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
+    {:else}
+        <p class="text-center"><i>loading...</i></p>
     {/each}
 </main>
 
