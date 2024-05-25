@@ -5,16 +5,19 @@
 //  import { decode } from 'light-bolt11-decoder';
     import Profile from './Profile.svelte';
     import { ZapReceipt } from '$lib/ZapReceipt';
+    import { unixTimeFormat } from '$lib/Helper';
 
     export let event: ZapReceipt;
 //  let sender: string;
 //  let reciever: string;
 //  let amount: number;
     console.debug('[Card event]', event.id);
-    
 </script>
 
 <div class="card">
+    <div class="card-header">
+        <p class="fw-light text-end my-0">{unixTimeFormat(event.created_at)}</p>
+    </div>
     <div class="card-body">
         <div class="row">
             <div class="col-5">

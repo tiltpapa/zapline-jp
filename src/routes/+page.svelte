@@ -21,7 +21,7 @@
         rxNostr
             .use(forward, {relays: localRelay})
             .pipe(uniq())
-            .pipe(sortEvents(1 * 1000))
+            .pipe(sortEvents(2 * 1000))
             .subscribe({
                 next: (packet) => {
                     const event = new ZapReceipt(packet.event);
