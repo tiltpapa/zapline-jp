@@ -6,15 +6,17 @@
     import ZapCard from "./ZapCard.svelte";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
-    import { dicRelay, localRelay } from "$lib/Relay";
+    import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
-    import { bufferCount, bufferTime } from "rxjs";
+    import { bufferTime } from "rxjs";
 
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
 //      rxNostr.addDefaultRelays(["wss://yabu.me", "wss://r.kojira.io"]);
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
+        const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
+        let follow: string[]; // nostr-japanese-users follow list
 
         rxNostr
             .use(forward, {relays: localRelay})
@@ -23,21 +25,25 @@
             .subscribe({
                 next: (packet) => {
                     const event = new ZapReceipt(packet.event);
-                    $zapPool.unshift(event);
-                    zapPool.set($zapPool);
+                    const existSenderInFollow = follow.find((item) => item === event.sender) !== undefined;
+                    const existReceiverInFollow = follow.find((item) => item === event.receiver) !== undefined;
+                    if ( existSenderInFollow || existReceiverInFollow ){
+                        $zapPool.unshift(event);
+                        zapPool.set($zapPool);
 
-                    const existSenderInPool = ($profilePool.find((content) => content.pubkey === $zapPool[0].sender)) !== undefined;
-                    const existReceiverInPool = ($profilePool.find((content) => content.pubkey === $zapPool[0].receiver)) !== undefined;
-                    
-                    if ( !existSenderInPool ) {
-                        backward.emit({ kinds: [0], authors: [$zapPool[0].sender], limit: 1});
-                    }
-                    if ( !existReceiverInPool ) {
-                        backward.emit({ kinds: [0], authors: [$zapPool[0].receiver], limit: 1});
+                        const existSenderInPool = ($profilePool.find((content) => content.pubkey === event.sender)) !== undefined;
+                        const existReceiverInPool = ($profilePool.find((content) => content.pubkey === event.receiver)) !== undefined;
+                        
+                        if ( !existSenderInPool ) {
+                            backward.emit({ kinds: [0], authors: [event.sender], limit: 1 });
+                        }
+                        if ( !existReceiverInPool ) {
+                            backward.emit({ kinds: [0], authors: [event.receiver], limit: 1 });
+                        }   
                     }
                 }
             });
-        forward.emit({ kinds:[9735], limit: 10 });
+//      forward.emit({ kinds:[9735], limit: 10 });
 
         const batcher = backward
                             .pipe(
@@ -62,12 +68,22 @@
             .subscribe({
                 next: (packet) => {
                     const event = packet.event;
-                    let metadata = JSON.parse(event.content);
-                    metadata.pubkey = event.pubkey;
-                    $profilePool.push(metadata);
-                    profilePool.set($profilePool);
+                    if ( event.kind === 3 ){
+                        follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
+                        console.debug('[Follow]', follow);
+                        if (follow !== undefined){
+                            const sinceDate = Math.floor(Date.now() / 1000) - (6 * 60 * 60);
+                            forward.emit({ kinds:[9735], since: sinceDate });
+                        }
+                    }else if ( event.kind === 0 ){
+                        let metadata = JSON.parse(event.content);
+                        metadata.pubkey = event.pubkey;
+                        $profilePool.push(metadata);
+                        profilePool.set($profilePool);
+                    }
                 }    
             });
+        backward.emit({ kinds: [3], authors: [botPubkey], limit: 1 }, {relays: botRelay});
 
         return () => rxNostr.dispose();
     });
@@ -76,6 +92,8 @@
 <main>
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
+    {:else}
+        <p class="text-center"><i>loading...</i></p>
     {/each}
 </main>
 
