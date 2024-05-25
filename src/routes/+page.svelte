@@ -8,7 +8,7 @@
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
-    import { bufferCount, bufferTime } from "rxjs";
+    import { bufferTime } from "rxjs";
 
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
@@ -73,13 +73,14 @@
                         console.debug('[Follow]', follow);
                         if (follow !== undefined){
                             const sinceDate = Math.floor(Date.now() / 1000) - (6 * 60 * 60);
-                            forward.emit({ kinds:[9735], since: sinceDate});
+                            forward.emit({ kinds:[9735], since: sinceDate });
                         }
+                    }else if ( event.kind === 0 ){
+                        let metadata = JSON.parse(event.content);
+                        metadata.pubkey = event.pubkey;
+                        $profilePool.push(metadata);
+                        profilePool.set($profilePool);
                     }
-                    let metadata = JSON.parse(event.content);
-                    metadata.pubkey = event.pubkey;
-                    $profilePool.push(metadata);
-                    profilePool.set($profilePool);
                 }    
             });
         backward.emit({ kinds: [3], authors: [botPubkey], limit: 1 }, {relays: botRelay});
