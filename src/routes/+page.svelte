@@ -6,7 +6,7 @@
     import ZapCard from "./ZapCard.svelte";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
-    import { dicRelay, localRelay } from "$lib/Relay";
+    import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferCount, bufferTime } from "rxjs";
 
@@ -15,6 +15,8 @@
 //      rxNostr.addDefaultRelays(["wss://yabu.me", "wss://r.kojira.io"]);
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
+        const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
+        let follow: string[]; // nostr-japanese-users follow list
 
         rxNostr
             .use(forward, {relays: localRelay})
@@ -62,12 +64,18 @@
             .subscribe({
                 next: (packet) => {
                     const event = packet.event;
+                    if (event.kind === 3){
+                        const plist = event.tags.filter((item) => item[0] === "p");
+                        follow = plist.map(item => item[1]);
+                        console.debug('[Follow]', follow);
+                    }
                     let metadata = JSON.parse(event.content);
                     metadata.pubkey = event.pubkey;
                     $profilePool.push(metadata);
                     profilePool.set($profilePool);
                 }    
             });
+        backward.emit({ kinds: [3], authors: [botPubkey], limit: 1 }, {relays: botRelay});
 
         return () => rxNostr.dispose();
     });
