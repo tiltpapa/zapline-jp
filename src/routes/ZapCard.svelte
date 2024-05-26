@@ -17,8 +17,8 @@
 <div class="card">
     <div class="card-header">
         <div class="row">
-            <div class="col-9"><p class="text-truncate my-0">{event.content}</p></div>
-            <div class="col-3"><p class="fw-light text-end my-0">{unixTimeFormat(event.created_at)}</p></div>
+            <div class="col-7"><p class="text-truncate my-0">{event.content}</p></div>
+            <div class="col-5"><p class="fw-light text-end my-0">{unixTimeFormat(event.created_at)}</p></div>
         </div>
     </div>
     <div class="card-body">
