@@ -16,19 +16,32 @@
 
 <div class="card">
     <div class="card-header">
-        <div class="row">
-            <div class="col-9"><p class="text-truncate my-0">{event.content}</p></div>
-            <div class="col-3"><p class="fw-light text-end my-0">{unixTimeFormat(event.created_at)}</p></div>
+        <div class="row child-p-my0">
+            <div class="col-8 col-sm-9">
+                <p class="text-truncate">
+                    {#if event.content.length !== 0}
+                        {event.content}
+                    {:else}
+                        {event.message}
+                    {/if}
+                </p>
+            </div>
+            <div class="col-4 col-sm-3"><p class="fw-light text-end">{unixTimeFormat(event.created_at)}</p></div>
         </div>
     </div>
-    <div class="card-body">
+    <div class="card-body py-2">
         <div class="row">
             <div class="col-5">
                 <Profile pubkey={event.sender} />
             </div>
             
             <div class="col-2 my-auto text-center">
-                <FontAwesomeIcon icon={faArrowRight} size="2x" />
+                <div class="d-block d-sm-none">
+                    <FontAwesomeIcon icon={faArrowRight} size="2x" />
+                </div>
+                <div class="d-none d-sm-block">
+                    <FontAwesomeIcon icon={faArrowRight} size="4x" />
+                </div>
             </div>
 
             <div class="col-5">
@@ -48,5 +61,8 @@
 </div>
 
 <style>
-    
+    .child-p-my0 p {
+        margin-top: 0;
+        margin-bottom: 0;
+    }
 </style>
