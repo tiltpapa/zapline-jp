@@ -16,7 +16,7 @@
 
 <div class="card">
     <div class="card-header">
-        <div class="row child-p-my0">
+        <div class="row">
             <div class="col-8 col-sm-9">
                 <p class="text-truncate">
                     {#if event.content.length !== 0}
@@ -61,7 +61,7 @@
 </div>
 
 <style>
-    .child-p-my0 p {
+    .card p {
         margin-top: 0;
         margin-bottom: 0;
     }
