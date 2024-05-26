@@ -29,7 +29,7 @@
             <div class="col-4 col-sm-3"><p class="fw-light text-end">{unixTimeFormat(event.created_at)}</p></div>
         </div>
     </div>
-    <div class="card-body py-2">
+    <div class="card-body">
         <div class="row">
             <div class="col-5">
                 <Profile pubkey={event.sender} />
