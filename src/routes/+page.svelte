@@ -98,15 +98,5 @@
 </main>
 
 <style>
-    main {
-        width: 100%;
-        padding: 0;
-    }
 
-    @media (min-width: 768px) {
-        main {
-            width: 768px;
-            margin: 0 auto;
-        }
-    }
 </style>

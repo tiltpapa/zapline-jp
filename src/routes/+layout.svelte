@@ -18,12 +18,25 @@
     </ul>
 </nav>
 
-<div class="main-content">
+<div class="main-content main-width">
     <slot></slot>
 </div>
 
 <style>
     .main-content {
         margin-top: 56px;
+    }
+    
+    .main-width {
+        width: 100%;
+        padding: 0;
+    }
+
+    @media (min-width: 768px) {
+        .main-width {
+            width: 768px;
+            margin-left: auto;
+            margin-right: auto;
+        }
     }
 </style>
