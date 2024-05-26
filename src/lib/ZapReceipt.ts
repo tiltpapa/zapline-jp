@@ -14,6 +14,7 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
     private _sender?: pubkey;
     private _receiver?: pubkey;
     private _amount?: number;
+    private _message?: string;
 
     constructor(event: Nostr.Event<Nostr.Kind.Zap>){
         this.id = event.id;
@@ -60,5 +61,19 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
         this._amount = Math.floor(msats / 1000);
 
         return this._amount;
+    }
+
+    public get message(): string {
+        if (this._message !== undefined){
+            return this._message;
+        }
+        
+        const request = this.tags.find((item) => item[0] === "description")?.at(1);
+        if (request === undefined){
+            return undefined;
+        }
+        this._message = JSON.parse(request).content;
+
+        return this._message;
     }
 }
