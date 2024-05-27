@@ -9,14 +9,16 @@
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
+    import 'spinkit/spinkit.min.css'
+    import 'checkbox.css/dist/css/inout/inout.min.css'
 
+    let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
 //      rxNostr.addDefaultRelays(["wss://yabu.me", "wss://r.kojira.io"]);
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
-        let follow: string[]; // nostr-japanese-users follow list
 
         rxNostr
             .use(forward, {relays: localRelay})
@@ -93,10 +95,46 @@
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
     {:else}
-        <p class="text-center"><i>loading...</i></p>
+        <div class="container p-3">
+            <div class="row g-3 loading-row-h">
+                <div class="col-3 col-sm-4 ms-auto text-end">
+                    {#if follow}
+                        <input type="checkbox" class="checkbox-inout" checked readonly/>
+                    {:else}
+                        <div class="sk-circle">
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                            <div class="sk-circle-dot"></div>
+                        </div>
+                    {/if}
+                </div>
+                <div class="col-9 col-sm-8 mx-auto">Collecting a List of Japanese users</div>
+            </div>
+        </div>
+        
     {/each}
 </main>
 
 <style>
+    :root {
+        --sk-size: 1.5rem;
+        --sk-color: #00ff00;
+    }
 
+    .loading-row-h {
+        height: var(--sk-size);
+    }
+
+    .sk-circle {
+        margin-left: auto;
+    }
 </style>
