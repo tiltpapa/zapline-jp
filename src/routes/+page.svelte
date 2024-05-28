@@ -9,9 +9,10 @@
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
-    import 'spinkit/spinkit.min.css'
-    import 'checkbox.css/dist/css/inout/inout.min.css'
-    import { fly } from "svelte/transition";
+    import Loading from "./Loading.svelte";
+//  import 'spinkit/spinkit.min.css'
+//  import 'checkbox.css/dist/css/inout/inout.min.css'
+//  import { fly } from "svelte/transition";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -96,7 +97,8 @@
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
     {:else}
-        <div class="container p-3" out:fly={{y: 100}}>
+        <Loading follow />
+<!--    <div class="container p-3" out:fly={{y: 100}}>
             <div class="row gy-4 loading-row-h">
                 <div class="col-3 col-sm-4 ms-auto text-end">
                     {#if follow}
@@ -141,12 +143,12 @@
                 </div>
                 <div class="col-9 col-sm-8 mx-auto">Collecting Zap event & Sorting</div>
             </div>
-        </div>
+        </div>-->
     {/each}
 </main>
 
 <style>
-    :root {
+/*  :root {
         --sk-size: 1.5rem;
         --sk-color: #00ff00;
     }
@@ -157,5 +159,5 @@
 
     .sk-circle {
         margin-left: auto;
-    }
+    }*/
 </style>
