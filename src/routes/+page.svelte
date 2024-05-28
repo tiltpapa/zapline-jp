@@ -9,14 +9,18 @@
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
+    import Loading from "./Loading.svelte";
+//  import 'spinkit/spinkit.min.css'
+//  import 'checkbox.css/dist/css/inout/inout.min.css'
+//  import { fly } from "svelte/transition";
 
+    let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
 //      rxNostr.addDefaultRelays(["wss://yabu.me", "wss://r.kojira.io"]);
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
-        let follow: string[]; // nostr-japanese-users follow list
 
         rxNostr
             .use(forward, {relays: localRelay})
@@ -93,7 +97,7 @@
     {#each $zapPool as event, i (event.id)}
         <ZapCard {event} />
     {:else}
-        <p class="text-center"><i>loading...</i></p>
+        <Loading {follow} />
     {/each}
 </main>
 
