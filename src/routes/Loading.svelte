@@ -1,16 +1,16 @@
 <script>
     import 'spinkit/spinkit.min.css'
     import 'checkbox.css/dist/css/inout/inout.min.css'
-    import { fly } from "svelte/transition";
-
+    
     export let follow; // nostr-japanese-users follow list
 </script>
 
-<div class="container p-3" out:fly={{y: 100}}>
-    <div class="row gy-4 loading-row-h">
-        <div class="col-3 col-sm-4 ms-auto text-end">
+<div class="container p-3">
+    <div class="row gx-2 gy-4 loading-row-h">
+        <div class="col-1 col-sm-3"><!-- blank --></div>
+        <div class="col-2 col-sm-1 text-center">
             {#if follow}
-                <input type="checkbox" class="checkbox-inout" checked readonly/>
+                <input type="checkbox" class="checkbox-inout" id="follow" autocomplete="off" checked readonly/>
             {:else}
                 <div class="sk-circle">
                     <div class="sk-circle-dot"></div>
@@ -29,7 +29,8 @@
             {/if}
         </div>
         <div class="col-9 col-sm-8 mx-auto">Collecting a List of Japanese users</div>
-        <div class="col-3 col-sm-4 ms-auto text-end">
+        <div class="col-1 col-sm-3"><!-- blank --></div>
+        <div class="col-2 col-sm-1 text-center">
             {#if follow}
                 <div class="sk-circle">
                     <div class="sk-circle-dot"></div>
@@ -46,7 +47,7 @@
                     <div class="sk-circle-dot"></div>
                 </div>
             {:else}
-                <input type="checkbox" class="checkbox-inout" readonly/>
+                <input type="checkbox" autocomplete="off" readonly/>
             {/if}
         </div>
         <div class="col-9 col-sm-8 mx-auto">Collecting Zap event & Sorting</div>
@@ -65,5 +66,6 @@
 
     .sk-circle {
         margin-left: auto;
+        margin-right: auto;
     }
 </style>
