@@ -25,7 +25,7 @@
         rxNostr
             .use(forward, {relays: localRelay})
             .pipe(uniq())
-            .pipe(sortEvents(2 * 1000))
+//          .pipe(sortEvents(2 * 1000))
             .subscribe({
                 next: (packet) => {
                     const event = new ZapReceipt(packet.event);
@@ -33,6 +33,7 @@
                     const existReceiverInFollow = follow.find((item) => item === event.receiver) !== undefined;
                     if ( existSenderInFollow || existReceiverInFollow ){
                         $zapPool.unshift(event);
+                        $zapPool.sort((a, b) => { return b.created_at - a.created_at; });
                         zapPool.set($zapPool);
 
                         const existSenderInPool = ($profilePool.find((content) => content.pubkey === event.sender)) !== undefined;
