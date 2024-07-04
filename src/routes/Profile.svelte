@@ -5,12 +5,7 @@
         
     export let pubkey: pubkey;
     const unknownPic = "https://robohash.org/" + pubkey + ".png?set=set4&size=150x150";
-/*    
-    const isPubkey = (str: pubkey): boolean => {
-        const regex = /^[0-9a-fA-F]{64}$/;
-        return regex.test(str ?? '');
-    };
-*/  
+
     let profile: Nostr.Content.Metadata;
     profilePool.subscribe((store) => {
         const metadata = store.find((data) => data.pubkey === pubkey);

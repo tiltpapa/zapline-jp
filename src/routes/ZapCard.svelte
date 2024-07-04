@@ -1,16 +1,12 @@
 <script lang="ts">
-    import * as Nostr from 'nostr-typedef';
     import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
     import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome';
-//  import { decode } from 'light-bolt11-decoder';
     import Profile from './Profile.svelte';
     import { ZapReceipt } from '$lib/ZapReceipt';
     import { unixTimeFormat } from '$lib/Helper';
 
     export let event: ZapReceipt;
-//  let sender: string;
-//  let reciever: string;
-//  let amount: number;
+
     console.debug('[Card event]', event.id);
 </script>
 

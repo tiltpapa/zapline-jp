@@ -1,6 +1,5 @@
 <script lang="ts">
     import { WebSocket } from "ws";
-//  import * as Nostr from "nostr-typedef";
     import { onMount } from "svelte";
     import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
     import ZapCard from "./ZapCard.svelte";
@@ -10,14 +9,10 @@
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
     import Loading from "./Loading.svelte";
-//  import 'spinkit/spinkit.min.css'
-//  import 'checkbox.css/dist/css/inout/inout.min.css'
-//  import { fly } from "svelte/transition";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
         const rxNostr = createRxNostr({ websocketCtor: WebSocket });
-//      rxNostr.addDefaultRelays(["wss://yabu.me", "wss://r.kojira.io"]);
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
@@ -25,7 +20,6 @@
         rxNostr
             .use(forward, {relays: localRelay})
             .pipe(uniq())
-//          .pipe(sortEvents(2 * 1000))
             .subscribe({
                 next: (packet) => {
                     const event = new ZapReceipt(packet.event);
@@ -48,7 +42,6 @@
                     }
                 }
             });
-//      forward.emit({ kinds:[9735], limit: 10 });
 
         const batcher = backward
                             .pipe(
