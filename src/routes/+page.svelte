@@ -2,13 +2,13 @@
     import { WebSocket } from "ws";
     import { onMount } from "svelte";
     import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
-    import ZapCard from "./ZapCard.svelte";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
     import Loading from "./Loading.svelte";
+    import ZapCardView from "./ZapCardView.svelte";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -88,11 +88,11 @@
 </script>
 
 <main>
-    {#each $zapPool as event, i (event.id)}
-        <ZapCard {event} />
+    {#if $zapPool}
+        <ZapCardView />
     {:else}
         <Loading {follow} />
-    {/each}
+    {/if}
 </main>
 
 <style>
