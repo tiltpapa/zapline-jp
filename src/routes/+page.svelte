@@ -1,7 +1,7 @@
 <script lang="ts">
     import { WebSocket } from "ws";
     import { onMount } from "svelte";
-    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
+    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, now, sortEvents, uniq } from "rx-nostr";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
@@ -10,6 +10,7 @@
     import Loading from "./Loading.svelte";
     import ZapCardView from "./ZapCardView.svelte";
     import 'spinkit/spinkit.min.css'
+    import { sinceDate } from "$lib/Helper";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -71,7 +72,6 @@
                         follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
                         console.debug('[Follow]', follow);
                         if (follow !== undefined){
-                            const sinceDate = Math.floor(Date.now() / 1000) - (6 * 60 * 60);
                             forward.emit({ kinds:[9735], since: sinceDate });
                         }
                     }else if ( event.kind === 0 ){
