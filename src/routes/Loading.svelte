@@ -55,17 +55,18 @@
 </div>
 
 <style>
-    :root {
-        --sk-size: 1.5rem;
-        --sk-color: #00ff00;
-    }
-
     .loading-row-h {
-        height: var(--sk-size);
+        height: 1.5rem;
     }
 
     .sk-circle {
+        width: 1.5rem;
+        height: 1.5rem;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .sk-circle-dot:before {
+        background-color: #00ff00;
     }
 </style>

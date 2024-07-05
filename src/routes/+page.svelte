@@ -9,6 +9,7 @@
     import { bufferTime } from "rxjs";
     import Loading from "./Loading.svelte";
     import ZapCardView from "./ZapCardView.svelte";
+    import 'spinkit/spinkit.min.css'
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -88,13 +89,27 @@
 </script>
 
 <main>
-    {#if $zapPool}
+    {#if $zapPool.length > 0}
         <ZapCardView />
+        <div class="sk-flow mx-auto my-3">
+            <div class="sk-flow-dot"></div>
+            <div class="sk-flow-dot"></div>
+            <div class="sk-flow-dot"></div>
+        </div>
     {:else}
         <Loading {follow} />
     {/if}
 </main>
 
 <style>
+    .sk-flow {
+        width: 6rem;
+        height: 2rem;
+    }
 
+    .sk-flow-dot {
+        width: 1rem;
+        height: 1rem;
+        background-color: #00aaff;
+    }
 </style>
