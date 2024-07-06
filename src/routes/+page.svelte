@@ -18,18 +18,26 @@
         const forward = createRxForwardReq();
         const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
+        const backwardZap = createRxBackwardReq();
 
         const addZapPool = (packet: EventPacket) => {
             const event = new ZapReceipt(packet.event);
+
+            const existZapInPool = $zapPool.find((item) => item.id === event.id) !== undefined;
+            if (existZapInPool) {
+                return;
+            }
+
             const existSenderInFollow = follow.find((item) => item === event.sender) !== undefined;
             const existReceiverInFollow = follow.find((item) => item === event.receiver) !== undefined;
+            
             if ( existSenderInFollow || existReceiverInFollow ){
                 $zapPool.unshift(event);
                 $zapPool.sort((a, b) => { return b.created_at - a.created_at; });
                 zapPool.set($zapPool);
 
-                const existSenderInPool = ($profilePool.find((content) => content.pubkey === event.sender)) !== undefined;
-                const existReceiverInPool = ($profilePool.find((content) => content.pubkey === event.receiver)) !== undefined;
+                const existSenderInPool = $profilePool.find((content) => content.pubkey === event.sender) !== undefined;
+                const existReceiverInPool = $profilePool.find((content) => content.pubkey === event.receiver) !== undefined;
                 
                 if ( !existSenderInPool ) {
                     backward.emit({ kinds: [0], authors: [event.sender], limit: 1 });
@@ -42,6 +50,13 @@
 
         rxNostr
             .use(forward, {relays: localRelay})
+            .pipe(uniq())
+            .subscribe({
+                next: (packet) => { addZapPool(packet) }
+            });
+
+        rxNostr
+            .use(backwardZap, {relays: localRelay})
             .pipe(uniq())
             .subscribe({
                 next: (packet) => { addZapPool(packet) }
