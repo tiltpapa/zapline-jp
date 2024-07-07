@@ -10,7 +10,7 @@
     import Loading from "./Loading.svelte";
     import ZapCardView from "./ZapCardView.svelte";
     import 'spinkit/spinkit.min.css'
-    import { sinceDate } from "$lib/Helper";
+    import { sinceDate, untilDate } from "$lib/Helper";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -47,7 +47,7 @@
                 }   
             }
         };
-
+        
         rxNostr
             .use(forward, {relays: localRelay})
             .pipe(uniq())
@@ -61,7 +61,19 @@
             .subscribe({
                 next: (packet) => { addZapPool(packet) }
             });
-
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    backwardZap.emit({ kinds:[9735], since: sinceDate, until: untilDate });
+                }
+            });
+        });
+        const skFlow = document.getElementsByClassName('sk-flow')[0];
+/*       if (skFlow.length > 0) {
+            observer.observe(skFlow.item(0));
+        }
+*/
         const batcher = backward
                             .pipe(
                                 bufferTime(1 * 1000), 
