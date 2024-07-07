@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { WebSocket } from "ws";
     import { onMount } from "svelte";
     import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, now, sortEvents, uniq, type EventPacket } from "rx-nostr";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
+    import { backward, backwardZap, forward, rxNostr } from "$lib/RxNostr";
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
@@ -14,11 +14,7 @@
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
-        const rxNostr = createRxNostr({ websocketCtor: WebSocket });
-        const forward = createRxForwardReq();
-        const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
-        const backwardZap = createRxBackwardReq();
 
         const addZapPool = (packet: EventPacket) => {
             const event = new ZapReceipt(packet.event);
