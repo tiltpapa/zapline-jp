@@ -11,6 +11,7 @@
     import ZapCardView from "./ZapCardView.svelte";
     import 'spinkit/spinkit.min.css'
     import { sinceDate, untilDate } from "$lib/Helper";
+    import More from "./More.svelte";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -58,18 +59,6 @@
                 next: (packet) => { addZapPool(packet) }
             });
         
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    backwardZap.emit({ kinds:[9735], since: sinceDate, until: untilDate });
-                }
-            });
-        });
-        const skFlow = document.getElementsByClassName('sk-flow')[0];
-/*       if (skFlow.length > 0) {
-            observer.observe(skFlow.item(0));
-        }
-*/
         const batcher = backward
                             .pipe(
                                 bufferTime(1 * 1000), 
@@ -116,25 +105,12 @@
 <main>
     {#if $zapPool.length > 0}
         <ZapCardView />
-        <div class="sk-flow mx-auto my-3">
-            <div class="sk-flow-dot"></div>
-            <div class="sk-flow-dot"></div>
-            <div class="sk-flow-dot"></div>
-        </div>
+        <More />
     {:else}
         <Loading {follow} />
     {/if}
 </main>
 
 <style>
-    .sk-flow {
-        width: 6rem;
-        height: 2rem;
-    }
 
-    .sk-flow-dot {
-        width: 1rem;
-        height: 1rem;
-        background-color: #00aaff;
-    }
 </style>
