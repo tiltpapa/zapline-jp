@@ -1,48 +1,69 @@
 <script lang="ts">
-    import { WebSocket } from "ws";
     import { onMount } from "svelte";
-    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, sortEvents, uniq } from "rx-nostr";
-    import ZapCard from "./ZapCard.svelte";
+    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, now, sortEvents, uniq, type EventPacket } from "rx-nostr";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
+    import { backward, backwardZap, forward, rxNostr } from "$lib/RxNostr";
     import { botRelay, dicRelay, localRelay } from "$lib/Relay";
     import { profilePool } from "../stores/ProfilePool";
     import { bufferTime } from "rxjs";
     import Loading from "./Loading.svelte";
+    import ZapCardView from "./ZapCardView.svelte";
+    import 'spinkit/spinkit.min.css'
+//  import { sinceDate, untilDate } from "$lib/Helper";
+    import More from "./More.svelte";
+    import { sinceDate, untilDate } from "../stores/Date";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
-        const rxNostr = createRxNostr({ websocketCtor: WebSocket });
-        const forward = createRxForwardReq();
-        const backward = createRxBackwardReq();
         const botPubkey = "087c51f1926f8d3cb4ff45f53a8ee2a8511cfe113527ab0e87f9c5821201a61e"; // nostr-japanese-users
 
+        const addZapPool = (packet: EventPacket) => {
+            const event = new ZapReceipt(packet.event);
+
+            if ( event.created_at < $untilDate ) {
+                untilDate.set(event.created_at);
+            }
+
+            const existZapInPool = $zapPool.find((item) => item.id === event.id) !== undefined;
+            if (existZapInPool) {
+                return;
+            }
+
+            const existSenderInFollow = follow.find((item) => item === event.sender) !== undefined;
+            const existReceiverInFollow = follow.find((item) => item === event.receiver) !== undefined;
+            
+            if ( existSenderInFollow || existReceiverInFollow ){
+                $zapPool.unshift(event);
+                $zapPool.sort((a, b) => { return b.created_at - a.created_at; });
+                zapPool.set($zapPool);
+
+                const existSenderInPool = $profilePool.find((content) => content.pubkey === event.sender) !== undefined;
+                const existReceiverInPool = $profilePool.find((content) => content.pubkey === event.receiver) !== undefined;
+                
+                if ( !existSenderInPool ) {
+                    backward.emit({ kinds: [0], authors: [event.sender], limit: 1 });
+                }
+                if ( !existReceiverInPool ) {
+                    backward.emit({ kinds: [0], authors: [event.receiver], limit: 1 });
+                }   
+            }
+        };
+        
         rxNostr
             .use(forward, {relays: localRelay})
             .pipe(uniq())
             .subscribe({
-                next: (packet) => {
-                    const event = new ZapReceipt(packet.event);
-                    const existSenderInFollow = follow.find((item) => item === event.sender) !== undefined;
-                    const existReceiverInFollow = follow.find((item) => item === event.receiver) !== undefined;
-                    if ( existSenderInFollow || existReceiverInFollow ){
-                        $zapPool.unshift(event);
-                        $zapPool.sort((a, b) => { return b.created_at - a.created_at; });
-                        zapPool.set($zapPool);
-
-                        const existSenderInPool = ($profilePool.find((content) => content.pubkey === event.sender)) !== undefined;
-                        const existReceiverInPool = ($profilePool.find((content) => content.pubkey === event.receiver)) !== undefined;
-                        
-                        if ( !existSenderInPool ) {
-                            backward.emit({ kinds: [0], authors: [event.sender], limit: 1 });
-                        }
-                        if ( !existReceiverInPool ) {
-                            backward.emit({ kinds: [0], authors: [event.receiver], limit: 1 });
-                        }   
-                    }
-                }
+                next: (packet) => { addZapPool(packet) }
             });
 
+        rxNostr
+            .use(backwardZap, {relays: localRelay})
+            .pipe(uniq())
+            .subscribe({
+                next: (packet) => { addZapPool(packet) }
+            });
+        
         const batcher = backward
                             .pipe(
                                 bufferTime(1 * 1000), 
@@ -70,8 +91,7 @@
                         follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
                         console.debug('[Follow]', follow);
                         if (follow !== undefined){
-                            const sinceDate = Math.floor(Date.now() / 1000) - (6 * 60 * 60);
-                            forward.emit({ kinds:[9735], since: sinceDate });
+                            forward.emit({ kinds:[9735], since: $sinceDate });
                         }
                     }else if ( event.kind === 0 ){
                         let metadata = JSON.parse(event.content);
@@ -88,11 +108,12 @@
 </script>
 
 <main>
-    {#each $zapPool as event, i (event.id)}
-        <ZapCard {event} />
+    {#if $zapPool.length > 0}
+        <ZapCardView />
+        <More />
     {:else}
         <Loading {follow} />
-    {/each}
+    {/if}
 </main>
 
 <style>
