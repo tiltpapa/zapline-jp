@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import { backwardZap } from "$lib/RxNostr";
     import { lastUntilDate, sinceDate, untilDate } from "../stores/Date";
+    import { unixTimeFormat } from "$lib/Helper";
 //  import { sinceDate, untilDate } from "$lib/Helper";
 
     onMount(() => {
@@ -10,6 +11,7 @@
                 if (entry.isIntersecting) {
                     console.debug("intersecting");
                     lastUntilDate.set($untilDate);
+                    console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
                     backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
                 }
             });

@@ -13,6 +13,7 @@
 //  import { sinceDate, untilDate } from "$lib/Helper";
     import More from "./More.svelte";
     import { lastUntilDate, sinceDate, untilDate } from "../stores/Date";
+    import { unixTimeFormat } from "$lib/Helper";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -64,8 +65,10 @@
                 next: (packet) => { addZapPool(packet) },
                 complete: () => {
                     const oldestEvent = $zapPool?.at(-1);
+                    console.debug("oldest:", oldestEvent?.created_at, "lastUntil", $lastUntilDate);
                     if ( oldestEvent !== undefined && oldestEvent?.created_at < $lastUntilDate ) {
                         console.debug("re-request");
+                        console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
                         backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
                     }
                 }
