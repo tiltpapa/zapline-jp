@@ -10,8 +10,9 @@
     import Loading from "./Loading.svelte";
     import ZapCardView from "./ZapCardView.svelte";
     import 'spinkit/spinkit.min.css'
-    import { sinceDate, untilDate } from "$lib/Helper";
+//  import { sinceDate, untilDate } from "$lib/Helper";
     import More from "./More.svelte";
+    import { sinceDate, untilDate } from "../stores/Date";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -19,6 +20,10 @@
 
         const addZapPool = (packet: EventPacket) => {
             const event = new ZapReceipt(packet.event);
+
+            if ( event.created_at < $untilDate ) {
+                untilDate.set(event.created_at);
+            }
 
             const existZapInPool = $zapPool.find((item) => item.id === event.id) !== undefined;
             if (existZapInPool) {
@@ -86,7 +91,7 @@
                         follow = event.tags.filter((item) => item[0] === "p")?.map(item => item[1]);
                         console.debug('[Follow]', follow);
                         if (follow !== undefined){
-                            forward.emit({ kinds:[9735], since: sinceDate });
+                            forward.emit({ kinds:[9735], since: $sinceDate });
                         }
                     }else if ( event.kind === 0 ){
                         let metadata = JSON.parse(event.content);

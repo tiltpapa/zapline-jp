@@ -11,7 +11,7 @@ export const unixTimeFormat =
                                 minute: "2-digit",
                                 hourCycle: "h23"
                             }).format(new Date(unixTime * 1000));
-
+/*
 export const untilDate = () => {
     const oldestEvent = get(zapPool)?.at(-1);
     if (oldestEvent === undefined) {
@@ -21,3 +21,4 @@ export const untilDate = () => {
 }
 
 export const sinceDate = () => { return untilDate() - (3 * 60 * 60) };
+*/
