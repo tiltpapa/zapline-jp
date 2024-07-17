@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { batch, chunk, createRxBackwardReq, createRxForwardReq, createRxNostr, latestEach, now, sortEvents, uniq, type EventPacket } from "rx-nostr";
+    import { batch, chunk, latestEach, uniq, type EventPacket } from "rx-nostr";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { backward, backwardZap, forward, rxNostr } from "$lib/RxNostr";

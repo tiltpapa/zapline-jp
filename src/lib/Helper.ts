@@ -1,7 +1,3 @@
-import { get } from "svelte/store";
-import { zapPool } from "../stores/ZapPool";
-import { now } from "rx-nostr";
-
 export const unixTimeFormat =
                         (unixTime) => 
                             new Intl.DateTimeFormat('en-US',{
