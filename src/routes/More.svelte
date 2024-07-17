@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { backwardZap } from "$lib/RxNostr";
-    import { sinceDate, untilDate } from "../stores/Date";
+    import { lastUntilDate, sinceDate, untilDate } from "../stores/Date";
 //  import { sinceDate, untilDate } from "$lib/Helper";
 
     onMount(() => {
@@ -9,6 +9,7 @@
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     console.debug("intersecting");
+                    lastUntilDate.set($untilDate);
                     backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
                 }
             });

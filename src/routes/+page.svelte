@@ -12,7 +12,7 @@
     import 'spinkit/spinkit.min.css'
 //  import { sinceDate, untilDate } from "$lib/Helper";
     import More from "./More.svelte";
-    import { sinceDate, untilDate } from "../stores/Date";
+    import { lastUntilDate, sinceDate, untilDate } from "../stores/Date";
 
     let follow: string[]; // nostr-japanese-users follow list
     onMount(() => {
@@ -61,7 +61,14 @@
             .use(backwardZap, {relays: localRelay})
             .pipe(uniq())
             .subscribe({
-                next: (packet) => { addZapPool(packet) }
+                next: (packet) => { addZapPool(packet) },
+                complete: () => {
+                    const oldestEvent = $zapPool?.at(-1);
+                    if ( oldestEvent !== undefined && oldestEvent?.created_at < $lastUntilDate ) {
+                        console.debug("re-request");
+                        backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
+                    }
+                }
             });
         
         const batcher = backward
