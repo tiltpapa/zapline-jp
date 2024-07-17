@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { batch, chunk, latestEach, uniq, type EventPacket } from "rx-nostr";
+    import { batch, chunk, filterBySubId, filterByType, latestEach, uniq, type EventPacket } from "rx-nostr";
     import { zapPool } from "../stores/ZapPool";
     import { ZapReceipt } from "$lib/ZapReceipt";
     import { backward, backwardZap, forward, rxNostr } from "$lib/RxNostr";
@@ -62,15 +62,20 @@
             .use(backwardZap, {relays: localRelay})
             .pipe(uniq())
             .subscribe({
-                next: (packet) => { addZapPool(packet) },
-                complete: () => {
-                    const oldestEvent = $zapPool?.at(-1);
-                    console.debug("oldest:", oldestEvent?.created_at, "lastUntil", $lastUntilDate);
-                    if ( oldestEvent !== undefined && oldestEvent?.created_at < $lastUntilDate ) {
-                        console.debug("re-request");
-                        console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
-                        backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
-                    }
+                next: (packet) => { addZapPool(packet) }
+            });
+        
+        rxNostr
+            .createAllMessageObservable()
+            .pipe(filterByType("EOSE"))
+            .pipe(filterBySubId(backwardZap.rxReqId))
+            .subscribe(() => {
+                const oldestEvent = $zapPool?.at(-1);
+                console.debug("oldest:", oldestEvent?.created_at, "lastUntil", $lastUntilDate);
+                if ( oldestEvent !== undefined && oldestEvent?.created_at < $lastUntilDate ) {
+                    console.debug("re-request");
+                    console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
+                    backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
                 }
             });
         
