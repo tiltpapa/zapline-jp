@@ -9,7 +9,7 @@ Access! → https://tiltpapa.github.io/zapline-jp/
 
 ## ToDo
 - [ ] 画像表示をちゃんとする
-- [ ] 過去方向への無限スクロール
+- [x] 過去方向への無限スクロール
 - [x] [nostr-japanese-users](https://github.com/SnowCait/nostr-japanese-users) filter
 - Settings
   - [ ] Alby & WoS filter
