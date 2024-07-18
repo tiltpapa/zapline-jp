@@ -36,7 +36,11 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
             if(request === undefined){
                 return undefined;
             }
-            this._sender = JSON.parse(request).pubkey;
+            try {
+                this._sender = JSON.parse(request).pubkey;
+            } catch (e) {
+                return undefined;
+            }
         }
         return this._sender;
     }
@@ -70,9 +74,15 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
         
         const request = this.tags.find((item) => item[0] === "description")?.at(1);
         if (request === undefined){
-            return undefined;
+            this._message = "";
+            return this._message;
         }
-        this._message = JSON.parse(request).content;
+        
+        try {
+            this._message = JSON.parse(request).content;
+        } catch (e) {
+            this._message = "";
+        }
 
         return this._message;
     }

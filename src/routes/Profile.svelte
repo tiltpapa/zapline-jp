@@ -11,7 +11,7 @@
         const metadata = store.find((data) => data.pubkey === pubkey);
         if (metadata !== undefined && profile === undefined) {
             profile = metadata;
-            console.debug('[Profile picture]', profile.picture);
+//          console.debug('[Profile picture]', profile.picture);
         }
     });
 </script>
