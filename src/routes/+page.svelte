@@ -63,7 +63,7 @@
             .pipe(uniq())
             .subscribe({
                 next: (packet) => { addZapPool(packet) },
-                complete: () => {
+/*              complete: () => {
                     const oldestEvent = $zapPool?.at(-1);
                     console.debug("oldest:", oldestEvent?.created_at, "lastUntil", $lastUntilDate);
                     if ( oldestEvent !== undefined && oldestEvent?.created_at < $lastUntilDate ) {
@@ -71,7 +71,7 @@
                         console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
                         backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
                     }
-                }
+                } */
             });
         
         const batcher = backward
