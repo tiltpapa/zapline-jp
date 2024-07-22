@@ -10,6 +10,11 @@
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
                     console.debug("intersecting");
+                    window.scrollBy({
+                        top: - entry.intersectionRect.width,
+                        behavior: "smooth"
+                    });
+
                     lastUntilDate.set($untilDate);
                     console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
                     backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });

@@ -81,7 +81,7 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
         try {
             this._message = JSON.parse(request).content;
         } catch (e) {
-            this.message = "";
+            this._message = "";
         }
 
         return this._message;
