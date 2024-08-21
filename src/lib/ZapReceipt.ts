@@ -60,9 +60,18 @@ export class ZapReceipt implements Nostr.Event<Nostr.Kind.Zap> {
         }
 
         const bolt11 = this.tags.find((item) => item[0] === "bolt11")?.at(1);
-        const decoded = decode(bolt11);
-        const msats = decoded.sections.find((section) => section.name === "amount")?.value;
-        this._amount = Math.floor(msats / 1000);
+        if (bolt11 == undefined) {
+            this._amount = 0;
+            return this._amount; 
+        }
+
+        try {
+            const decoded = decode(bolt11);
+            const msats = decoded.sections.find((section) => section.name === "amount")?.value;
+            this._amount = Math.floor(msats / 1000);
+        } catch (e) {
+            this._amount = 0;
+        }
 
         return this._amount;
     }
