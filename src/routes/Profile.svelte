@@ -2,9 +2,11 @@
     import type { pubkey } from '$lib/Type';
     import * as Nostr from 'nostr-typedef';
     import { profilePool } from '../stores/ProfilePool';
+    import * as nip19 from 'nostr-tools/nip19'
         
     export let pubkey: pubkey;
     const unknownPic = "https://robohash.org/" + pubkey + ".png?set=set4&size=150x150";
+    const npub = nip19.npubEncode(pubkey);
 
     let profile: Nostr.Content.Metadata;
     profilePool.subscribe((store) => {
@@ -17,13 +19,15 @@
 </script>
 
 <div class="text-center">
-    <div class="icon-container">
-        {#if profile}
-            <img src={profile.picture ?? unknownPic} class="rounded-circle img-fluid" alt={profile.name ?? 'unknown'} />
-        {:else}
-            <img src={unknownPic} class="rounded-circle img-fluid" alt="unknown" />
-        {/if}
-    </div>
+    <a href={"https://njump.me/" + npub} target="_blank">
+        <div class="icon-container">
+            {#if profile}
+                <img src={profile.picture ?? unknownPic} class="rounded-circle img-fluid" alt={profile.name ?? 'unknown'} />
+            {:else}
+                <img src={unknownPic} class="rounded-circle img-fluid" alt="unknown" />
+            {/if}
+        </div>
+    </a>
 
     <p class="card-text text-truncate">
         {#if profile}
