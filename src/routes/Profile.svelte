@@ -19,7 +19,7 @@
 </script>
 
 <div class="text-center">
-    <a href={"https://njump.me/" + npub} target="_blank">
+    <a href={"https://njump.me/" + npub} target="_blank" rel="noopener noreferrer">
         <div class="icon-container">
             {#if profile}
                 <img src={profile.picture ?? unknownPic} class="rounded-circle img-fluid" alt={profile.name ?? 'unknown'} />
