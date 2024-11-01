@@ -8,6 +8,9 @@
     export let event: ZapReceipt;
 
     console.debug('[Card event]', event.id);
+    if (event.sender === undefined) {
+      console.warn('sender is undefined', event);
+    }
 </script>
 
 <div class="card">
@@ -28,7 +31,7 @@
     <div class="card-body">
         <div class="row">
             <div class="col-5">
-                <Profile pubkey={event.sender} />
+                {#if event.sender !== undefined}<Profile pubkey={event.sender} />{/if}
             </div>
             
             <div class="col-2 my-auto text-center">
