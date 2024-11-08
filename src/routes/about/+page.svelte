@@ -28,12 +28,11 @@
             </div>
             
             <!-- Thanks Section -->
-            <!--
             <div class="mb-4">
                 <h3>Thanks</h3>
-                <p>Special thanks to all the contributors and supporters.</p>
+                <!--<p>Special thanks to all the contributors and supporters.</p>-->
+                <p><a href="https://nostter.app/nikolat@nikolat.github.io" target="_blank">Don / nikolat</a></p>
             </div>
-            -->
         </div>
     </div>
 </div>
