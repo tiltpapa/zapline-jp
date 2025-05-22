@@ -13,6 +13,7 @@ export const zapPoolIntervalId: Writable<number> = writable(0);
  */
 export const checkZapPoolRepeatedly = (initialLength: number): void => {
     if (get(zapPoolIntervalId) !== 0) {
+        console.debug("zapPoolIntervalId:", get(zapPoolIntervalId));
         return;
     }
 
@@ -22,11 +23,13 @@ export const checkZapPoolRepeatedly = (initialLength: number): void => {
             console.debug("since:", unixTimeFormat(get(sinceDate)), "until:", unixTimeFormat(get(untilDate)));
             backwardZap.emit({ kinds:[9735], since: get(sinceDate), until: get(untilDate) });
         } else {
-            clearInterval(get(zapPoolIntervalId));
+            window.clearInterval(get(zapPoolIntervalId));
             zapPoolIntervalId.set(0);
         }
     }
 
-    const intervalId = setInterval(() => req(initialLength), 2000);
+    const intervalId = window.setInterval(() => req(initialLength), 2000);
+//    console.debug("intervalId:", intervalId);
     zapPoolIntervalId.set(Number(intervalId));
+//    console.debug("zapPoolIntervalId:", get(zapPoolIntervalId));
 };

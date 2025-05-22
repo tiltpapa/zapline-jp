@@ -21,7 +21,7 @@
                     backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
 
                     // zapPoolの数が変動するまで再帰的に処理する
-                    checkZapPoolRepeatedly($zapPool.length);
+                    setTimeout(() => checkZapPoolRepeatedly($zapPool.length), 2000);
                 }
             });
         });
