@@ -3,6 +3,7 @@
     import { backwardZap } from "$lib/RxNostr";
     import { lastUntilDate, sinceDate, untilDate } from "../stores/Date";
     import { unixTimeFormat } from "$lib/Helper";
+    import { zapPool, checkZapPoolRepeatedly } from "../stores/ZapPool";
 //  import { sinceDate, untilDate } from "$lib/Helper";
 
     onMount(() => {
@@ -18,11 +19,16 @@
                     lastUntilDate.set($untilDate);
                     console.debug("since:", unixTimeFormat($sinceDate), "until:", unixTimeFormat($untilDate));
                     backwardZap.emit({ kinds:[9735], since: $sinceDate, until: $untilDate });
+
+                    // zapPoolの数が変動するまで再帰的に処理する
+                    setTimeout(() => checkZapPoolRepeatedly($zapPool.length), 2000);
                 }
             });
         });
         const more = document.getElementById('more');
-        observer.observe(more);
+        if (more) {
+            observer.observe(more);
+        }
     });
 </script>
 

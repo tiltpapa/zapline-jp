@@ -1,8 +1,14 @@
 <script>
     import 'spinkit/spinkit.min.css'
     import 'checkbox.css/dist/css/inout/inout.min.css'
+    import { onMount } from 'svelte';
+    import { checkZapPoolRepeatedly } from '../stores/ZapPool';
     
     export let follow; // nostr-japanese-users follow list
+    
+    onMount(() => {
+        setTimeout(() => checkZapPoolRepeatedly(0), 1000);
+    });
 </script>
 
 <div class="container p-3">
